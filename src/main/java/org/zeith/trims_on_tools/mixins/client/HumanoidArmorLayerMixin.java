@@ -2,14 +2,15 @@ package org.zeith.trims_on_tools.mixins.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.texture.*;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.zeith.trims_on_tools.api.TrimGlowData;
@@ -18,13 +19,6 @@ import org.zeith.trims_on_tools.api.TrimGlowData;
 public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>>
 		extends RenderLayer<T, M>
 {
-	@Unique
-	private static final RenderType EMISSIVE_ARMOR_TRIMS_SHEET_TYPE = RenderType.entityTranslucentEmissive(Sheets.ARMOR_TRIMS_SHEET);
-	
-	@Shadow
-	@Final
-	private TextureAtlas armorTrimAtlas;
-	
 	@Unique
 	private TrimGlowData toolTrims$emission;
 	
