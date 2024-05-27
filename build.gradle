@@ -149,6 +149,10 @@ repositories {
             includeGroupByRegex "mezz\\.jei.*"
         }
     }
+    maven {
+        name = "Kotlin for Forge"
+        url = uri("https://thedarkcolour.github.io/KotlinForForge/")
+    }
     flatDir { dirs "libraries/${config.mc_version}/all" }
     flatDir { dirs "libraries/${config.mc_version}/classpathOnly" }
     flatDir { dirs "libraries/${config.mc_version}/runtimeOnly" }
@@ -157,6 +161,8 @@ repositories {
 
 dependencies {
     minecraft "net.neoforged:forge:${config.mc_version}-${config.forge_version}"
+
+    implementation("thedarkcolour:kotlinforforge:4.10.0")
 
     if (hasConfig("hl_version") && !config.hl_version.isEmpty()) {
         implementation fg.deobf("org.zeith.hammerlib:HammerLib-${config.mc_version}:${config.hl_version}")

@@ -44,7 +44,7 @@ public class TrimItemModels
 		);
 		if(texture == null) return null;
 		
-		TrimGlowData glowData = TrimGlowData.getGlowData(access, toolItem).orElse(null);
+		TrimGlowData glowData = TrimGlowData.getGlowData(toolItem).orElse(null);
 		
 		ModelSettings ms = new ModelSettings(texture, glowData != null && glowData.glow());
 		BakedModel model = CACHE.get(ms);

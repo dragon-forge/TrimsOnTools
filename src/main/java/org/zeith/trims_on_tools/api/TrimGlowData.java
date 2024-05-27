@@ -28,23 +28,23 @@ public record TrimGlowData(boolean glow)
 			).apply(inst, TrimGlowData::new)
 	);
 	
-	public static boolean setGlowData(RegistryAccess access, ItemStack stack, TrimGlowData trim)
+	public static boolean setGlowData(ItemStack stack, TrimGlowData trim)
 	{
 		if(trim == null)
 		{
 			stack.removeTagKey(TAG_TRIM_GLOW_ID);
 			return true;
 		}
-		stack.getOrCreateTag().put(TAG_TRIM_GLOW_ID, CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, access), trim).result().orElseThrow());
+		stack.getOrCreateTag().put(TAG_TRIM_GLOW_ID, CODEC.encodeStart(NbtOps.INSTANCE, trim).result().orElseThrow());
 		return true;
 	}
 	
-	public static Optional<TrimGlowData> getGlowData(RegistryAccess access, ItemStack stack)
+	public static Optional<TrimGlowData> getGlowData(ItemStack stack)
 	{
 		if(stack.getTag() != null && stack.getTag().contains(TAG_TRIM_GLOW_ID))
 		{
 			CompoundTag compoundtag = stack.getTagElement(TAG_TRIM_GLOW_ID);
-			var armortrim = CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, access), compoundtag).resultOrPartial(LOGGER::error).orElse(null);
+			var armortrim = CODEC.parse(NbtOps.INSTANCE, compoundtag).resultOrPartial(LOGGER::error).orElse(null);
 			return Optional.ofNullable(armortrim);
 		} else
 		{
@@ -59,7 +59,7 @@ public record TrimGlowData(boolean glow)
 	
 	public static void appendUpgradeHoverText(ItemStack stack, RegistryAccess access, List<Component> hoverText)
 	{
-		var gd = TrimGlowData.getGlowData(access, stack);
+		var gd = TrimGlowData.getGlowData(stack);
 		if(gd.isEmpty()) return;
 		var glowData = gd.get();
 		if(glowData.glow())

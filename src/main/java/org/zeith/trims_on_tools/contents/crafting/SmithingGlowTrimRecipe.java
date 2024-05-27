@@ -44,7 +44,7 @@ public class SmithingGlowTrimRecipe
 			
 			if(!hasTrim) return ItemStack.EMPTY;
 			
-			var prev = TrimGlowData.getGlowData(access, itemstack).orElseGet(() -> new TrimGlowData(false));
+			var prev = TrimGlowData.getGlowData(itemstack).orElseGet(() -> new TrimGlowData(false));
 			
 			var next = prev.copyWithGlow(true);
 			
@@ -52,7 +52,7 @@ public class SmithingGlowTrimRecipe
 				return ItemStack.EMPTY;
 			
 			ItemStack stack = itemstack.copyWithCount(1);
-			if(TrimGlowData.setGlowData(access, stack, next))
+			if(TrimGlowData.setGlowData(stack, next))
 				return stack;
 		}
 		
@@ -71,7 +71,7 @@ public class SmithingGlowTrimRecipe
 			{
 				ToolTrim trim = new ToolTrim(optional1.get(), optional.get());
 				ToolTrim.setTrim(access, itemstack, trim);
-				TrimGlowData.setGlowData(access, itemstack, new TrimGlowData(true));
+				TrimGlowData.setGlowData(itemstack, new TrimGlowData(true));
 			}
 		}
 		

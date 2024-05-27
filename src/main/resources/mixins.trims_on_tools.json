@@ -10,12 +10,14 @@
     "BlockModelAccessor",
     "SmithingTemplateItemAccessor",
     "SmithingTemplateItemMixin",
-    "SmithingTrimRecipeAccessor"
+    "SmithingTrimRecipeAccessor",
+    "compat.elytratrims.FeatureAccessMixin"
   ],
   "client": [
     "client.BakedModelWrapperMixin",
     "client.HumanoidArmorLayerMixin",
-    "client.SimpleBakedModelBuilderMixin"
+    "client.SimpleBakedModelBuilderMixin",
+    "compat.elytratrims.ItemMixinMixin"
   ],
   "server": [
 	]

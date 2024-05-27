@@ -28,9 +28,9 @@ public class CauldronInteractions
 		
 		if(state.is(Blocks.WATER_CAULDRON))
 		{
-			var trim = TrimGlowData.getGlowData(level.registryAccess(), heldStack).orElse(null);
+			var trim = TrimGlowData.getGlowData(heldStack).orElse(null);
 			if(trim == null || !trim.glow()) return;
-			TrimGlowData.setGlowData(level.registryAccess(), heldStack, null);
+			TrimGlowData.setGlowData(heldStack, null);
 			level.playSound(e.getEntity(), pos, SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.5F, 2F);
 			LayeredCauldronBlock.lowerFillLevel(state, level, pos);
 			succcess = true;

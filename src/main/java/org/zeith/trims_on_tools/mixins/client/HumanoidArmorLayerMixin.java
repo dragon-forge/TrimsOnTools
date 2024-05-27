@@ -33,7 +33,7 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 	)
 	private void ToolTrims_renderArmorPiece_preinject(PoseStack p_117119_, MultiBufferSource p_117120_, T entity, EquipmentSlot slot, int p_117123_, A p_117124_, CallbackInfo ci)
 	{
-		toolTrims$emission = TrimGlowData.getGlowData(entity.level().registryAccess(), entity.getItemBySlot(slot)).orElse(null);
+		toolTrims$emission = TrimGlowData.getGlowData(entity.getItemBySlot(slot)).orElse(null);
 	}
 	
 	@ModifyVariable(
