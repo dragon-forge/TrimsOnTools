@@ -1,0 +1,6 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "trims_on_tools:item/glow_tool_trim_smithing_template_emissive"
+	}
+}

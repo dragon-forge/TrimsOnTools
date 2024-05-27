@@ -1,0 +1,49 @@
+# Mod Info
+mod_version=20.1.1
+build_candidate=false
+
+# Mod dependencies (jei is not a requirement, but HammerLib is)
+hl_version=20.1.29
+jei_version=15.3.0.4
+# hammeranims_version=20.1.16
+
+# Persistent mod info
+mod_id=trims_on_tools
+archive_name=TrimsOnTools
+mod_name=Trims on Tools
+mod_description=Apply trims to your tools.
+mod_authors=Zeitheron
+mod_license=All Rights Reserved
+mod_credits=None
+issue_tracker_url=https://github.com/dragon-forge/TrimsOnTools/issues
+
+# Maven Info
+maven_group=org.zeith.trims_on_tools
+maven_url=file:///SERVER//Maven
+
+# MC Info
+mc_version=1.20.1
+mc_range=[1.20.1,1.21)
+forge_version=47.1.76
+forge_range=[47,)
+mc_user=Zeitheron,63fa4c485b5640809727d5d59663e603
+
+# Misc Info
+java=17
+
+# Project ID on CurseForge
+cf_project=899883
+modrinth_project=b3wKSVMw
+
+# alpha, beta, release
+release_type=release
+
+# List of mods separated by ;
+# If a specific mod for one platform is needed, @m: or @c: prefixes are used.
+# Example for adding Hammer Lib for both Modrinth & CurseForge: 
+# @m:PlkSuVtM;@c:hammer-lib;
+# Which can be simplified to be just "hammer-lib" since the slug is the same on both platforms.
+required_mods=hammer-lib;
+optional_mods=
+incompatible_mods=
+embedded_mods=

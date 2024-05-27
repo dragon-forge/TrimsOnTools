@@ -1,0 +1,12 @@
+{
+  "type": "trims_on_tools:smithing_glow_trim",
+  "addition": {
+    "item": "minecraft:glow_ink_sac"
+  },
+  "base": {
+    "tag": "trims_on_tools:glowable_items"
+  },
+  "template": {
+    "item": "trims_on_tools:glow_tool_trim_smithing_template"
+  }
+}

@@ -1,0 +1,6 @@
+
+creative_tab.trims_on_tools.root=Trims on Tools
+
+item.trims_on_tools.smithing_template.tool_trim.applies_to=Tools
+trim_pattern.trims_on_tools.glow=Glowing Trim Modifier
+trim_pattern.trims_on_tools.glowing=Glowing
