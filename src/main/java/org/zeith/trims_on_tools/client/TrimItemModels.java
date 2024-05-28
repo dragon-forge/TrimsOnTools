@@ -79,9 +79,9 @@ public class TrimItemModels
 				Minecraft.getInstance().getModelManager().getMissingModel()
 		);
 		
-		List<BakedQuad> allQuads = new ArrayList<>(gen.getQuads(null, null, RandomSource.create()));
-		
-		if(emissive) QuadTransformers.settingMaxEmissivity().processInPlace(allQuads);
+		List<BakedQuad> allQuadsPre = new ArrayList<>(gen.getQuads(null, null, RandomSource.create()));
+		if(emissive) QuadTransformers.settingMaxEmissivity().processInPlace(allQuadsPre);
+		List<BakedQuad> allQuads = List.copyOf(allQuadsPre); // Unmodifiable copy plz thx
 		
 		return new BakedModelWrapper<>(gen)
 		{
@@ -100,7 +100,7 @@ public class TrimItemModels
 			@Override
 			public List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous)
 			{
-				return List.of(TRANSLUCENT_ITEM_CULL_TRIM_SHEET);
+				return List.of(TRANSLUCENT_ITEM_CULL_TRIM_SHEET); // TODO: this is a known performance bottleneck, are there any better ways of doing it?
 			}
 		};
 	}
