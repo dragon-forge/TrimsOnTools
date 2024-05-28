@@ -1,5 +1,5 @@
 {
-  "asset_name": "amethyst",
+  "asset": "minecraft:amethyst",
   "description": {
     "color": "#9A5CC6",
     "translate": "trim_material.minecraft.amethyst"

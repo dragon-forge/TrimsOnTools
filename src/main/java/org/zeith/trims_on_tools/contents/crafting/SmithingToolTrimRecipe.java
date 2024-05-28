@@ -8,11 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.Nullable;
 import org.zeith.hammerlib.api.recipes.SerializableRecipeType;
 import org.zeith.trims_on_tools.api.*;
+import org.zeith.trims_on_tools.api.data.*;
 import org.zeith.trims_on_tools.mixins.SmithingTrimRecipeAccessor;
 
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class SmithingToolTrimRecipe
 		if(this.base.test(itemstack))
 		{
 			Optional<Holder.Reference<ToolTrimMaterial>> optional = ToolTrimMaterial.getFromIngredient(access, container.getItem(2));
-			Optional<Holder.Reference<TrimPattern>> optional1 = RegistriesToT.getFromTemplate(access, container.getItem(0));
+			Optional<Holder.Reference<ToolTrimPattern>> optional1 = RegistriesToT.getFromTemplate(access, container.getItem(0));
 			if(optional.isPresent() && optional1.isPresent())
 			{
 				Optional<ToolTrim> toolTrim = ToolTrim.getTrim(access, itemstack);
@@ -61,7 +61,7 @@ public class SmithingToolTrimRecipe
 	public ItemStack getResultItem(RegistryAccess access)
 	{
 		ItemStack itemstack = new ItemStack(Items.IRON_PICKAXE);
-		Optional<Holder.Reference<TrimPattern>> optional = access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).holders().findFirst();
+		Optional<Holder.Reference<ToolTrimPattern>> optional = access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).holders().findFirst();
 		if(optional.isPresent())
 		{
 			Optional<Holder.Reference<ToolTrimMaterial>> optional1 = access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL).getHolder(ToolTrimMaterial.REDSTONE);

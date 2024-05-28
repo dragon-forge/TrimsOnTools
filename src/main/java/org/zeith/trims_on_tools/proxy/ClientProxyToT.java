@@ -1,19 +1,16 @@
 package org.zeith.trims_on_tools.proxy;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import org.zeith.hammerlib.api.proxy.IClientProxy;
 import org.zeith.hammerlib.util.mcf.RunnableReloader;
-import org.zeith.trims_on_tools.TrimsOnToolsMod;
-import org.zeith.trims_on_tools.client.TextureAtlasHolderToT;
-import org.zeith.trims_on_tools.client.TrimItemModels;
+import org.zeith.trims_on_tools.client.geom.TrimItemModels;
+import org.zeith.trims_on_tools.client.resource.TrimPermutationsSource;
 import org.zeith.trims_on_tools.init.ItemsToT;
-import org.zeith.trims_on_tools.init.SheetsToT;
 
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -22,12 +19,10 @@ public class ClientProxyToT
 		extends BaseProxyToT
 		implements IClientProxy
 {
-	private static TextureAtlasHolderToT TOOL_TRIMS_ATLAS;
-	
 	@Override
 	public void construct(IEventBus modBus)
 	{
-		modBus.addListener(this::clientSetup);
+		modBus.addListener(this::registerSpriteSources);
 		modBus.addListener(this::onRegisterReloadListenerEvent);
 		modBus.addListener(this::buildTabs);
 	}
@@ -57,23 +52,13 @@ public class ClientProxyToT
 				);
 	}
 	
-	public static TextureAtlasHolderToT getToolTrimsAtlas()
-	{
-		if(TOOL_TRIMS_ATLAS == null)
-		{
-			var txm = Minecraft.getInstance().getTextureManager();
-			TOOL_TRIMS_ATLAS = new TextureAtlasHolderToT(txm, SheetsToT.TOOL_TRIMS_SHEET, TrimsOnToolsMod.id("tool_trims"));
-		}
-		return TOOL_TRIMS_ATLAS;
-	}
-	
 	private void onRegisterReloadListenerEvent(RegisterClientReloadListenersEvent event)
 	{
-		event.registerReloadListener(getToolTrimsAtlas());
 		event.registerReloadListener(RunnableReloader.of(TrimItemModels::reload));
 	}
 	
-	private void clientSetup(FMLClientSetupEvent e)
+	private void registerSpriteSources(RegisterEvent e)
 	{
+		TrimPermutationsSource.TRIM_PERMUTATIONS.codec();
 	}
 }

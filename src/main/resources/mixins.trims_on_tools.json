@@ -7,7 +7,6 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ArmorTrimMixin",
-    "BlockModelAccessor",
     "SmithingTemplateItemAccessor",
     "SmithingTemplateItemMixin",
     "SmithingTrimRecipeAccessor",
@@ -17,8 +16,9 @@
     "client.BakedModelWrapperMixin",
     "client.HumanoidArmorLayerMixin",
     "client.SimpleBakedModelBuilderMixin",
+    "client.SpriteSourcesAccessor",
     "compat.elytratrims.ItemMixinMixin"
   ],
   "server": [
-	]
+  ]
 }

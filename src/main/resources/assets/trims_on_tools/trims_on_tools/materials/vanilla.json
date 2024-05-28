@@ -1,0 +1,14 @@
+{
+  "permutations": {
+    "minecraft:quartz": "trims/color_palettes/quartz",
+    "minecraft:iron": "trims/color_palettes/iron",
+    "minecraft:gold": "trims/color_palettes/gold",
+    "minecraft:diamond": "trims/color_palettes/diamond",
+    "minecraft:netherite": "trims/color_palettes/netherite",
+    "minecraft:redstone": "trims/color_palettes/redstone",
+    "minecraft:copper": "trims/color_palettes/copper",
+    "minecraft:emerald": "trims/color_palettes/emerald",
+    "minecraft:lapis": "trims/color_palettes/lapis",
+    "minecraft:amethyst": "trims/color_palettes/amethyst"
+  }
+}

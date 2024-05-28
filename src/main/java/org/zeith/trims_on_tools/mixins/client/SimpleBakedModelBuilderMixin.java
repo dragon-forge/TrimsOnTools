@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.zeith.trims_on_tools.client.BakedModelWrapperToT;
+import org.zeith.trims_on_tools.client.geom.BakedModelWrapperToT;
 
 @Mixin(SimpleBakedModel.Builder.class)
 public abstract class SimpleBakedModelBuilderMixin

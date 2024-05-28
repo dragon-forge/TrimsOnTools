@@ -1,5 +1,5 @@
 {
-  "asset_name": "redstone",
+  "asset": "minecraft:redstone",
   "description": {
     "color": "#971607",
     "translate": "trim_material.minecraft.redstone"

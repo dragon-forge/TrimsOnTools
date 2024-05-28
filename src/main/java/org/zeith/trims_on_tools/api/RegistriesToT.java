@@ -8,11 +8,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
-import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DataPackRegistryEvent;
 import org.zeith.trims_on_tools.TrimsOnToolsMod;
+import org.zeith.trims_on_tools.api.data.*;
 import org.zeith.trims_on_tools.mixins.SmithingTemplateItemAccessor;
 
 import java.util.List;
@@ -34,14 +34,14 @@ public class RegistriesToT
 	private static final ResourceLocation EMPTY_SLOT_SHOVEL = new ResourceLocation("item/empty_slot_shovel");
 	private static final ResourceLocation EMPTY_SLOT_PICKAXE = new ResourceLocation("item/empty_slot_pickaxe");
 	
-	public static final ResourceKey<Registry<TrimPattern>> TOOL_TRIM_PATTERN = createRegistryKey("tool_trim_pattern");
+	public static final ResourceKey<Registry<ToolTrimPattern>> TOOL_TRIM_PATTERN = createRegistryKey("tool_trim_pattern");
 	public static final ResourceKey<Registry<ToolTrimMaterial>> TOOL_TRIM_MATERIAL = createRegistryKey("tool_trim_material");
 	public static final ResourceKey<Registry<ToolType>> TOOL_TYPES = createRegistryKey("tool_types");
 	
 	@SubscribeEvent
 	public static void newRegistries(DataPackRegistryEvent.NewRegistry e)
 	{
-		e.dataPackRegistry(TOOL_TRIM_PATTERN, TrimPattern.DIRECT_CODEC, TrimPattern.DIRECT_CODEC);
+		e.dataPackRegistry(TOOL_TRIM_PATTERN, ToolTrimPattern.DIRECT_CODEC, ToolTrimPattern.DIRECT_CODEC);
 		e.dataPackRegistry(TOOL_TRIM_MATERIAL, ToolTrimMaterial.DIRECT_CODEC, ToolTrimMaterial.DIRECT_CODEC);
 		e.dataPackRegistry(TOOL_TYPES, ToolType.DIRECT_CODEC, ToolType.DIRECT_CODEC);
 	}
@@ -66,7 +66,7 @@ public class RegistriesToT
 		return List.of(EMPTY_SLOT_SWORD, EMPTY_SLOT_PICKAXE, EMPTY_SLOT_AXE, EMPTY_SLOT_HOE, EMPTY_SLOT_SHOVEL);
 	}
 	
-	public static Optional<Holder.Reference<TrimPattern>> getFromTemplate(RegistryAccess access, ItemStack template)
+	public static Optional<Holder.Reference<ToolTrimPattern>> getFromTemplate(RegistryAccess access, ItemStack template)
 	{
 		return access.registryOrThrow(TOOL_TRIM_PATTERN)
 				.holders()

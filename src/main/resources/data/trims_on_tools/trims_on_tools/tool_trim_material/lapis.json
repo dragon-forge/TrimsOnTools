@@ -1,5 +1,5 @@
 {
-  "asset_name": "lapis",
+  "asset": "minecraft:lapis",
   "description": {
     "color": "#416E97",
     "translate": "trim_material.minecraft.lapis"

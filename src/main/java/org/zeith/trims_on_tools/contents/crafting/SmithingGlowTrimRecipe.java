@@ -9,11 +9,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.Nullable;
 import org.zeith.hammerlib.api.recipes.SerializableRecipeType;
 import org.zeith.trims_on_tools.api.*;
+import org.zeith.trims_on_tools.api.data.*;
 import org.zeith.trims_on_tools.mixins.SmithingTrimRecipeAccessor;
 
 import java.util.Optional;
@@ -63,7 +63,7 @@ public class SmithingGlowTrimRecipe
 	public ItemStack getResultItem(RegistryAccess access)
 	{
 		ItemStack itemstack = new ItemStack(Items.IRON_PICKAXE);
-		Optional<Holder.Reference<TrimPattern>> optional = access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).holders().findFirst();
+		Optional<Holder.Reference<ToolTrimPattern>> optional = access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).holders().findFirst();
 		if(optional.isPresent())
 		{
 			Optional<Holder.Reference<ToolTrimMaterial>> optional1 = access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL).getHolder(ToolTrimMaterial.REDSTONE);

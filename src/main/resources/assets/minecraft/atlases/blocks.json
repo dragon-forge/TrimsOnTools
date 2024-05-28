@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {
+      "type": "trims_on_tools:trim_permutations",
+      "debug": false
+    }
+  ]
+}

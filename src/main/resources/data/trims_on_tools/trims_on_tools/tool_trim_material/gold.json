@@ -1,11 +1,11 @@
 {
-  "asset_name": "gold",
+  "asset": "minecraft:gold",
   "description": {
     "color": "#DEB12D",
     "translate": "trim_material.minecraft.gold"
   },
   "ingredient": "minecraft:gold_ingot",
-  "override_materials": {
-    "trims_on_tools:gold_tools": "gold_darker"
+  "override_assets": {
+    "trims_on_tools:tools/gold": "gold_darker"
   }
 }
