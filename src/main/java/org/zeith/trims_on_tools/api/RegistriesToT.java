@@ -70,7 +70,11 @@ public class RegistriesToT
 	{
 		return access.registryOrThrow(TOOL_TRIM_PATTERN)
 				.holders()
-				.filter((holder) -> template.is(holder.value().templateItem()))
+				.filter((holder) ->
+				{
+					var pat = holder.value();
+					return template.is(pat.templateItem()) && pat.isEnabled();
+				})
 				.findFirst();
 	}
 }

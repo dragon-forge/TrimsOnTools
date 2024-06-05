@@ -11,14 +11,35 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.zeith.trims_on_tools.TrimsOnToolsMod;
+import org.zeith.trims_on_tools.api.CodecsToT;
 import org.zeith.trims_on_tools.api.RegistriesToT;
+import org.zeith.trims_on_tools.api.util.Conditionals;
+import org.zeith.trims_on_tools.api.util.LazilyInitializedPredicate;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
 
-public record ToolTrimMaterial(ResourceLocation asset, Holder<Item> ingredient, Map<TagKey<Item>, ResourceLocation> overrideAssets, Component description)
+public record ToolTrimMaterial(
+		ResourceLocation asset,
+		Optional<Holder<Item>> ingredient,
+		Map<TagKey<Item>, ResourceLocation> overrideAssets,
+		Component description,
+		List<ICondition> conditions,
+		Predicate<ICondition.IContext> enabled
+)
 {
+	public ToolTrimMaterial(ResourceLocation asset, Optional<Holder<Item>> ingredient, Map<TagKey<Item>, ResourceLocation> overrideAssets, Component description, List<ICondition> conditions)
+	{
+		this(asset, ingredient, overrideAssets, description, conditions, LazilyInitializedPredicate.of(ctx -> Conditionals.processConditions(ctx, conditions)));
+	}
+	
+	public boolean isEnabled()
+	{
+		return enabled.test(Conditionals.currentServerContext);
+	}
+	
 	public static final ResourceKey<ToolTrimMaterial> QUARTZ = registryKey("quartz");
 	public static final ResourceKey<ToolTrimMaterial> IRON = registryKey("iron");
 	public static final ResourceKey<ToolTrimMaterial> NETHERITE = registryKey("netherite");
@@ -33,9 +54,10 @@ public record ToolTrimMaterial(ResourceLocation asset, Holder<Item> ingredient, 
 	public static final Codec<ToolTrimMaterial> DIRECT_CODEC = RecordCodecBuilder.create((inst) ->
 			inst.group(
 					ResourceLocation.CODEC.fieldOf("asset").forGetter(ToolTrimMaterial::asset),
-					RegistryFixedCodec.create(Registries.ITEM).fieldOf("ingredient").forGetter(ToolTrimMaterial::ingredient),
+					RegistryFixedCodec.create(Registries.ITEM).optionalFieldOf("ingredient").forGetter(ToolTrimMaterial::ingredient),
 					Codec.unboundedMap(TagKey.codec(Registries.ITEM), ResourceLocation.CODEC).optionalFieldOf("override_assets", Map.of()).forGetter(ToolTrimMaterial::overrideAssets),
-					ExtraCodecs.COMPONENT.fieldOf("description").forGetter(ToolTrimMaterial::description)
+					ExtraCodecs.COMPONENT.fieldOf("description").forGetter(ToolTrimMaterial::description),
+					CodecsToT.CONDITION.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolTrimMaterial::conditions)
 			).apply(inst, ToolTrimMaterial::new)
 	);
 	
@@ -50,7 +72,12 @@ public record ToolTrimMaterial(ResourceLocation asset, Holder<Item> ingredient, 
 	{
 		return access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL)
 				.holders()
-				.filter(holder -> ingredient.is(holder.value().ingredient()))
+				.filter(holder ->
+				{
+					var mat = holder.value();
+					var ing = mat.ingredient();
+					return ing.map(ingredient::is).orElse(false) && mat.isEnabled();
+				})
 				.findFirst();
 	}
 }

@@ -1,0 +1,14 @@
+{
+  "asset": "biomesoplenty:glowworm_silk",
+  "description": {
+    "color": "#52BEE2",
+    "translate": "trim_material.biomesoplenty.glowworm_silk"
+  },
+  "ingredient": "biomesoplenty:glowworm_silk",
+  "conditions": [
+	{
+		"type": "forge:mod_loaded",
+		"modid": "biomesoplenty"
+	}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "permutations": {
+    "biomesoplenty:glowworm_silk": "biomesoplenty:trims/color_palettes/glowworm_silk",
+    "biomesoplenty:rose_quartz": "biomesoplenty:trims/color_palettes/rose_quartz"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "biomesoplenty"
+    }
+  ]
+}

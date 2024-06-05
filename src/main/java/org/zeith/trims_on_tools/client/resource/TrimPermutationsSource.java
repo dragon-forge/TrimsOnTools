@@ -23,9 +23,11 @@ import net.minecraft.util.GsonHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.zeith.trims_on_tools.TrimsOnToolsMod;
+import org.zeith.trims_on_tools.api.util.Conditionals;
 import org.zeith.trims_on_tools.mixins.client.SpriteSourcesAccessor;
 
 import javax.annotation.Nullable;
@@ -68,17 +70,22 @@ public record TrimPermutationsSource(boolean debug)
 			var res = entry.getValue();
 			try(var reader = res.openAsReader())
 			{
-				var mat = PermutationMaterialFile.CODEC.decode(JsonOps.INSTANCE, GsonHelper.parse(reader))
+				var obj = GsonHelper.parse(reader);
+				
+				var mat = PermutationMaterialFile.CODEC.decode(JsonOps.INSTANCE, obj)
 						.result()
 						.orElseThrow(StreamCorruptedException::new)
 						.getFirst();
 				
 				if(debug) mat.printDebug(entry.getKey());
 				
-				// Add all located permutations.
-				permutations.putAll(mat.permutations());
-				
-				LOGGER.debug("Added {} tool trim materials from {}.", mat.permutations().size(), entry.getKey());
+				if(Conditionals.processConditions(ICondition.IContext.EMPTY, mat.conditions()))
+				{
+					// Add all located permutations.
+					permutations.putAll(mat.permutations());
+					LOGGER.debug("Added {} tool trim materials from {}.", mat.permutations().size(), entry.getKey());
+				} else
+					LOGGER.debug("Skipped {} tool trim materials from {} since the conditions were not met.", mat.permutations().size(), entry.getKey());
 			} catch(IOException e)
 			{
 				LOGGER.error("Failed to decode {} tool material.", entry.getKey(), e);

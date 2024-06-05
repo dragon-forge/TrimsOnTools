@@ -9,6 +9,14 @@
     "minecraft:netherite_ingot",
     "minecraft:redstone",
     "minecraft:quartz",
-    "minecraft:amethyst_shard"
+    "minecraft:amethyst_shard",
+	{
+		"id": "biomesoplenty:glowworm_silk",
+		"required": false
+	},
+	{
+		"id": "biomesoplenty:rose_quartz_chunk",
+		"required": false
+	}
   ]
 }

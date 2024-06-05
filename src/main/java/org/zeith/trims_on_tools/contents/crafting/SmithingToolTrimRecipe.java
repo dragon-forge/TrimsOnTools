@@ -11,7 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.Nullable;
 import org.zeith.hammerlib.api.recipes.SerializableRecipeType;
-import org.zeith.trims_on_tools.api.*;
+import org.zeith.trims_on_tools.api.RegistriesToT;
 import org.zeith.trims_on_tools.api.data.*;
 import org.zeith.trims_on_tools.mixins.SmithingTrimRecipeAccessor;
 
@@ -35,22 +35,22 @@ public class SmithingToolTrimRecipe
 	@Override
 	public ItemStack assemble(Container container, RegistryAccess access)
 	{
-		ItemStack itemstack = container.getItem(1);
-		if(this.base.test(itemstack))
+		ItemStack inputTool = container.getItem(1);
+		if(this.base.test(inputTool))
 		{
-			Optional<Holder.Reference<ToolTrimMaterial>> optional = ToolTrimMaterial.getFromIngredient(access, container.getItem(2));
-			Optional<Holder.Reference<ToolTrimPattern>> optional1 = RegistriesToT.getFromTemplate(access, container.getItem(0));
-			if(optional.isPresent() && optional1.isPresent())
+			Optional<Holder.Reference<ToolTrimMaterial>> mat = ToolTrimMaterial.getFromIngredient(access, container.getItem(2));
+			Optional<Holder.Reference<ToolTrimPattern>> pat = RegistriesToT.getFromTemplate(access, container.getItem(0));
+			if(mat.isPresent() && pat.isPresent())
 			{
-				Optional<ToolTrim> toolTrim = ToolTrim.getTrim(access, itemstack);
-				if(toolTrim.isPresent() && toolTrim.get().hasPatternAndMaterial(optional1.get(), optional.get()))
+				Optional<ToolTrim> toolTrim = ToolTrim.getTrim(access, inputTool);
+				if(toolTrim.isPresent() && toolTrim.get().hasPatternAndMaterial(pat.get(), mat.get()))
 					return ItemStack.EMPTY;
 				
-				ItemStack itemstack1 = itemstack.copy();
-				itemstack1.setCount(1);
-				ToolTrim armortrim = new ToolTrim(optional.get(), optional1.get());
-				if(ToolTrim.setTrim(access, itemstack1, armortrim))
-					return itemstack1;
+				ItemStack trimmedStack = inputTool.copy();
+				trimmedStack.setCount(1);
+				ToolTrim trim = new ToolTrim(mat.get(), pat.get());
+				if(ToolTrim.setTrim(access, trimmedStack, trim))
+					return trimmedStack;
 			}
 		}
 		
@@ -60,19 +60,15 @@ public class SmithingToolTrimRecipe
 	@Override
 	public ItemStack getResultItem(RegistryAccess access)
 	{
-		ItemStack itemstack = new ItemStack(Items.IRON_PICKAXE);
-		Optional<Holder.Reference<ToolTrimPattern>> optional = access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).holders().findFirst();
-		if(optional.isPresent())
-		{
-			Optional<Holder.Reference<ToolTrimMaterial>> optional1 = access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL).getHolder(ToolTrimMaterial.REDSTONE);
-			if(optional1.isPresent())
-			{
-				ToolTrim trim = new ToolTrim(optional1.get(), optional.get());
-				ToolTrim.setTrim(access, itemstack, trim);
-			}
-		}
+		ItemStack exampleTool = new ItemStack(Items.IRON_PICKAXE);
 		
-		return itemstack;
+		Optional<Holder.Reference<ToolTrimPattern>> pat = access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).holders().findFirst();
+		Optional<Holder.Reference<ToolTrimMaterial>> mat = access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL).getHolder(ToolTrimMaterial.REDSTONE);
+		
+		if(pat.isPresent() && mat.isPresent())
+			ToolTrim.setTrim(access, exampleTool, new ToolTrim(mat.get(), pat.get()));
+		
+		return exampleTool;
 	}
 	
 	public static class Type

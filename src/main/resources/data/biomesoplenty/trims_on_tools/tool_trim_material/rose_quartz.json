@@ -1,0 +1,14 @@
+{
+  "asset": "biomesoplenty:rose_quartz",
+  "description": {
+    "color": "#E33A61",
+    "translate": "trim_material.biomesoplenty.rose_quartz"
+  },
+  "ingredient": "biomesoplenty:rose_quartz_chunk",
+  "conditions": [
+	{
+		"type": "forge:mod_loaded",
+		"modid": "biomesoplenty"
+	}
+  ]
+}
