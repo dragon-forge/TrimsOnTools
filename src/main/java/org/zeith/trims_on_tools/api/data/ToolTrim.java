@@ -55,6 +55,7 @@ public class ToolTrim
 		
 		this.toolTexture = Util.memoize((mat, tool) ->
 		{
+			if(mat == null || tool == null) return null;
 			ResourceLocation patId = this.pattern.value().assetId();
 			ResourceLocation s = this.getColorPaletteAsset(mat);
 			return patId.withPath(path -> "trims_on_tools/trims/" + tool.getNamespace() + "/" + tool.getPath() + "/" + path + "/" + s.getNamespace() + "/" + s.getPath());

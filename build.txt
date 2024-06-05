@@ -1,5 +1,5 @@
 # Mod Info
-mod_version=20.1.1
+mod_version=20.1.2
 build_candidate=false
 
 # Mod dependencies (jei is not a requirement, but HammerLib is)
@@ -32,7 +32,7 @@ mc_user=Zeitheron,63fa4c485b5640809727d5d59663e603
 java=17
 
 # Project ID on CurseForge
-cf_project=899883
+cf_project=1025666
 modrinth_project=b3wKSVMw
 
 # alpha, beta, release
