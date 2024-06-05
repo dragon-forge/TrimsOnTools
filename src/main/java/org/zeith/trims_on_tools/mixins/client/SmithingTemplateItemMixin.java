@@ -1,8 +1,7 @@
-package org.zeith.trims_on_tools.mixins;
+package org.zeith.trims_on_tools.mixins.client;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -17,7 +16,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.zeith.hammerlib.api.lighting.ColoredLightManager;
 import org.zeith.trims_on_tools.api.RegistriesToT;
+import org.zeith.trims_on_tools.mixins.SmithingTemplateItemAccessor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,7 +81,11 @@ public class SmithingTemplateItemMixin
 	)
 	private void ToolTrims_appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flags, CallbackInfo ci)
 	{
-		if(level == null) level = Minecraft.getInstance().level;
+		if(level == null)
+		{
+			var pl = ColoredLightManager.getClientPlayer();
+			if(pl != null) level = pl.level();
+		}
 		if((level != null && RegistriesToT.getFromTemplate(level.registryAccess(), stack).isPresent()) || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
 			tooltip.add(CommonComponents.space().append(TOOL_TRIM_APPLIES_TO));
 	}

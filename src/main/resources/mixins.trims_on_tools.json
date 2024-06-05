@@ -8,7 +8,6 @@
   "mixins": [
     "ArmorTrimMixin",
     "SmithingTemplateItemAccessor",
-    "SmithingTemplateItemMixin",
     "SmithingTrimRecipeAccessor",
     "compat.elytratrims.FeatureAccessMixin"
   ],
@@ -17,7 +16,8 @@
     "client.HumanoidArmorLayerMixin",
     "client.SimpleBakedModelBuilderMixin",
     "client.SpriteSourcesAccessor",
-    "compat.elytratrims.ItemMixinMixin"
+    "compat.elytratrims.ItemMixinMixin",
+    "client.SmithingTemplateItemMixin"
   ],
   "server": [
   ]
