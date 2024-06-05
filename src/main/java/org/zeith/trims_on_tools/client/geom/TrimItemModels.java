@@ -41,15 +41,15 @@ public class TrimItemModels
 						.map(Holder.Reference::value)
 						.orElse(null))
 		);
-		if(texture == null) return null;
+		
+		if(baker == null || texture == null) return null;
 		
 		TrimGlowData glowData = TrimGlowData.getGlowData(toolItem).orElse(null);
 		
-		ModelSettings ms = new ModelSettings(texture, glowData != null && glowData.glow());
-		if(baker == null || CACHE.containsKey(ms)) return CACHE.get(ms);
-		var gen = generateModel(ms);
-		CACHE.put(ms, gen);
-		return gen;
+		return CACHE.computeIfAbsent(
+				new ModelSettings(texture, glowData != null && glowData.glow()),
+				TrimItemModels::generateModel
+		);
 	}
 	
 	private static BakedModel generateModel(final ModelSettings settings)
@@ -128,7 +128,7 @@ public class TrimItemModels
 		@Override
 		public UnbakedModel getModel(ResourceLocation location)
 		{
-			return overrides.getOrDefault(location, bakery.getModel(location));
+			return overrides.computeIfAbsent(location, bakery::getModel);
 		}
 		
 		@Override

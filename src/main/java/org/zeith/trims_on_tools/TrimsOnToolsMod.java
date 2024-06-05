@@ -34,7 +34,9 @@ public class TrimsOnToolsMod
 	{
 		CommonMessages.printMessageOnIllegalRedistribution(TrimsOnToolsMod.class, LogManager.getLogger("TrimsOnToolsMod"), "TrimsOnTools", "https://modrinth.com/project/b3wKSVMw");
 		LanguageAdapter.registerMod(MOD_ID);
-		PROXY.construct(FMLJavaModLoadingContext.get().getModEventBus());
+		var mb = FMLJavaModLoadingContext.get().getModEventBus();
+		PROXY.construct(mb);
+		mb.addListener(this::checkFingerprint);
 		LootTableAdapter.addLoadHook(LootTableLoader::loadTable);
 	}
 	
