@@ -21,25 +21,8 @@ import org.zeith.trims_on_tools.api.util.LazilyInitializedPredicate;
 import java.util.*;
 import java.util.function.Predicate;
 
-public record ToolTrimMaterial(
-		ResourceLocation asset,
-		Optional<Holder<Item>> ingredient,
-		Map<TagKey<Item>, ResourceLocation> overrideAssets,
-		Component description,
-		List<ICondition> conditions,
-		Predicate<ICondition.IContext> enabled
-)
+public final class ToolTrimMaterial
 {
-	public ToolTrimMaterial(ResourceLocation asset, Optional<Holder<Item>> ingredient, Map<TagKey<Item>, ResourceLocation> overrideAssets, Component description, List<ICondition> conditions)
-	{
-		this(asset, ingredient, overrideAssets, description, conditions, LazilyInitializedPredicate.of(ctx -> Conditionals.processConditions(ctx, conditions)));
-	}
-	
-	public boolean isEnabled()
-	{
-		return enabled.test(Conditionals.currentServerContext);
-	}
-	
 	public static final ResourceKey<ToolTrimMaterial> QUARTZ = registryKey("quartz");
 	public static final ResourceKey<ToolTrimMaterial> IRON = registryKey("iron");
 	public static final ResourceKey<ToolTrimMaterial> NETHERITE = registryKey("netherite");
@@ -60,24 +43,106 @@ public record ToolTrimMaterial(
 					CodecsToT.CONDITION.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolTrimMaterial::conditions)
 			).apply(inst, ToolTrimMaterial::new)
 	);
-	
 	public static final Codec<Holder<ToolTrimMaterial>> CODEC = RegistryFileCodec.create(RegistriesToT.TOOL_TRIM_MATERIAL, DIRECT_CODEC);
 	
-	private static ResourceKey<ToolTrimMaterial> registryKey(String id)
+	private final ResourceLocation asset;
+	private final Optional<Holder<Item>> ingredient;
+	private final Map<TagKey<Item>, ResourceLocation> overrideAssets;
+	private final Component description;
+	private final List<ICondition> conditions;
+	private final Predicate<ICondition.IContext> enabled;
+	
+	public ToolTrimMaterial(
+			ResourceLocation asset,
+			Optional<Holder<Item>> ingredient,
+			Map<TagKey<Item>, ResourceLocation> overrideAssets,
+			Component description,
+			List<ICondition> conditions
+	)
 	{
-		return ResourceKey.create(RegistriesToT.TOOL_TRIM_MATERIAL, TrimsOnToolsMod.id(id));
+		this.asset = asset;
+		this.ingredient = ingredient;
+		this.overrideAssets = overrideAssets;
+		this.description = description;
+		this.conditions = conditions;
+		this.enabled = LazilyInitializedPredicate.of(ctx -> Conditionals.processConditions(ctx, conditions));
+	}
+	
+	public boolean isEnabled()
+	{
+		return enabled.test(Conditionals.currentServerContext);
+	}
+	
+	public ResourceLocation asset()
+	{
+		return asset;
+	}
+	
+	public Optional<Holder<Item>> ingredient()
+	{
+		return ingredient;
+	}
+	
+	public Map<TagKey<Item>, ResourceLocation> overrideAssets()
+	{
+		return overrideAssets;
+	}
+	
+	public Component description()
+	{
+		return description;
+	}
+	
+	public List<ICondition> conditions()
+	{
+		return conditions;
 	}
 	
 	public static Optional<Holder.Reference<ToolTrimMaterial>> getFromIngredient(RegistryAccess access, ItemStack ingredient)
 	{
 		return access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL)
 				.holders()
-				.filter(holder ->
+				.filter((holder) ->
 				{
 					var mat = holder.value();
 					var ing = mat.ingredient();
 					return ing.map(ingredient::is).orElse(false) && mat.isEnabled();
 				})
 				.findFirst();
+	}
+	
+	private static ResourceKey<ToolTrimMaterial> registryKey(String id)
+	{
+		return ResourceKey.create(RegistriesToT.TOOL_TRIM_MATERIAL, TrimsOnToolsMod.id(id));
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(obj == this) return true;
+		if(obj == null || obj.getClass() != this.getClass()) return false;
+		var that = (ToolTrimMaterial) obj;
+		return Objects.equals(this.asset, that.asset) &&
+			   Objects.equals(this.ingredient, that.ingredient) &&
+			   Objects.equals(this.overrideAssets, that.overrideAssets) &&
+			   Objects.equals(this.description, that.description) &&
+			   Objects.equals(this.conditions, that.conditions);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(asset, ingredient, overrideAssets, description, conditions);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "ToolTrimMaterial[" +
+			   "asset=" + asset + ", " +
+			   "ingredient=" + ingredient + ", " +
+			   "overrideAssets=" + overrideAssets + ", " +
+			   "description=" + description + ", " +
+			   "conditions=" + conditions + ']';
 	}
 }

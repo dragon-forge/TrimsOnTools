@@ -38,16 +38,15 @@ public class SmithingToolTrimRecipe
 		ItemStack inputTool = container.getItem(1);
 		if(this.base.test(inputTool))
 		{
-			Optional<Holder.Reference<ToolTrimMaterial>> mat = ToolTrimMaterial.getFromIngredient(access, container.getItem(2));
-			Optional<Holder.Reference<ToolTrimPattern>> pat = RegistriesToT.getFromTemplate(access, container.getItem(0));
+			var mat = ToolTrimMaterial.getFromIngredient(access, container.getItem(2));
+			var pat = ToolTrimPattern.getFromTemplate(access, container.getItem(0));
 			if(mat.isPresent() && pat.isPresent())
 			{
 				Optional<ToolTrim> toolTrim = ToolTrim.getTrim(access, inputTool);
 				if(toolTrim.isPresent() && toolTrim.get().hasPatternAndMaterial(pat.get(), mat.get()))
 					return ItemStack.EMPTY;
 				
-				ItemStack trimmedStack = inputTool.copy();
-				trimmedStack.setCount(1);
+				ItemStack trimmedStack = inputTool.copyWithCount(1);
 				ToolTrim trim = new ToolTrim(mat.get(), pat.get());
 				if(ToolTrim.setTrim(access, trimmedStack, trim))
 					return trimmedStack;

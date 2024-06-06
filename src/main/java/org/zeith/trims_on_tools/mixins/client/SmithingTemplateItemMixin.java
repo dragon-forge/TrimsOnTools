@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.zeith.hammerlib.api.lighting.ColoredLightManager;
-import org.zeith.trims_on_tools.api.RegistriesToT;
+import org.zeith.trims_on_tools.api.data.ToolTrimPattern;
 import org.zeith.trims_on_tools.mixins.SmithingTemplateItemAccessor;
 
 import java.util.*;
@@ -86,7 +86,7 @@ public class SmithingTemplateItemMixin
 			var pl = ColoredLightManager.getClientPlayer();
 			if(pl != null) level = pl.level();
 		}
-		if((level != null && RegistriesToT.getFromTemplate(level.registryAccess(), stack).isPresent()) || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
+		if((level != null && ToolTrimPattern.getFromTemplate(level.registryAccess(), stack).isPresent()) || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
 			tooltip.add(CommonComponents.space().append(TOOL_TRIM_APPLIES_TO));
 	}
 	

@@ -34,11 +34,16 @@ public class TrimItemModels
 	private static final Map<ModelSettings, BakedModel> CACHE = new HashMap<>();
 	private static ModelBakerImpl baker;
 	
+	public static void resetRegistryCache()
+	{
+		TOOL_TYPE_CACHE.clear();
+	}
+	
 	public static BakedModel getModel(RegistryAccess access, ItemStack toolItem, ToolTrim trim)
 	{
 		var texture = trim.texture(access, toolItem, TOOL_TYPE_CACHE.computeIfAbsent(toolItem.getItem(), it ->
 				ToolType.getFromTool(access, toolItem)
-						.map(Holder.Reference::value)
+						.map(Holder::value)
 						.orElse(null))
 		);
 		

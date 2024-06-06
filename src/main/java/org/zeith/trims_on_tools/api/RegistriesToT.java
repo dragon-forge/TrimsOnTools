@@ -2,11 +2,10 @@ package org.zeith.trims_on_tools.api;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.core.*;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,7 +15,6 @@ import org.zeith.trims_on_tools.api.data.*;
 import org.zeith.trims_on_tools.mixins.SmithingTemplateItemAccessor;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RegistriesToT
@@ -64,17 +62,5 @@ public class RegistriesToT
 	private static List<ResourceLocation> createTrimmableToolIconList()
 	{
 		return List.of(EMPTY_SLOT_SWORD, EMPTY_SLOT_PICKAXE, EMPTY_SLOT_AXE, EMPTY_SLOT_HOE, EMPTY_SLOT_SHOVEL);
-	}
-	
-	public static Optional<Holder.Reference<ToolTrimPattern>> getFromTemplate(RegistryAccess access, ItemStack template)
-	{
-		return access.registryOrThrow(TOOL_TRIM_PATTERN)
-				.holders()
-				.filter((holder) ->
-				{
-					var pat = holder.value();
-					return template.is(pat.templateItem()) && pat.isEnabled();
-				})
-				.findFirst();
 	}
 }

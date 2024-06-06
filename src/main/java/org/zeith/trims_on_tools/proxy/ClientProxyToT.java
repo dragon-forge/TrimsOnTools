@@ -1,9 +1,11 @@
 package org.zeith.trims_on_tools.proxy;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegisterEvent;
 import org.zeith.hammerlib.api.proxy.IClientProxy;
@@ -25,6 +27,31 @@ public class ClientProxyToT
 		modBus.addListener(this::registerSpriteSources);
 		modBus.addListener(this::onRegisterReloadListenerEvent);
 		modBus.addListener(this::buildTabs);
+		
+		MinecraftForge.EVENT_BUS.addListener(this::clientTick);
+		MinecraftForge.EVENT_BUS.addListener(this::tagsUpdated);
+	}
+	
+	protected boolean hasLevel;
+	
+	private void clientTick(TickEvent.ClientTickEvent event)
+	{
+		var hasLevel = Minecraft.getInstance().level != null;
+		if(hasLevel != this.hasLevel)
+		{
+			this.hasLevel = hasLevel;
+			
+			if(!hasLevel)
+			{
+				TrimItemModels.resetRegistryCache();
+			}
+		}
+	}
+	
+	private void tagsUpdated(TagsUpdatedEvent e)
+	{
+		if(e.getUpdateCause() != TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) return;
+		TrimItemModels.resetRegistryCache(); // Wipe the cache just to be extra safe!
 	}
 	
 	private void buildTabs(BuildCreativeModeTabContentsEvent e)
