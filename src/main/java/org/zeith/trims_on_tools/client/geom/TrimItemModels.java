@@ -13,16 +13,17 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.BakedModelWrapper;
-import net.minecraftforge.client.model.QuadTransformers;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.BakedModelWrapper;
+import net.neoforged.neoforge.client.model.QuadTransformers;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.zeith.hammerlib.util.java.Cast;
 import org.zeith.trims_on_tools.api.data.*;
+import org.zeith.trims_on_tools.mixins.client.ModelBakeryAccessor;
 
 import java.util.*;
 import java.util.function.Function;
@@ -122,18 +123,20 @@ public class TrimItemModels
 	{
 		private final Map<ResourceLocation, UnbakedModel> overrides = new HashMap<>();
 		private final ModelBakery bakery;
+		private final ModelBakeryAccessor bakeryAccessor;
 		private final Function<Material, TextureAtlasSprite> modelTextureGetter;
 		
 		ModelBakerImpl(ModelBakery bakery, Function<Material, TextureAtlasSprite> modelTextureGetter)
 		{
 			this.bakery = bakery;
+			this.bakeryAccessor = (ModelBakeryAccessor) bakery;
 			this.modelTextureGetter = modelTextureGetter;
 		}
 		
 		@Override
 		public UnbakedModel getModel(ResourceLocation location)
 		{
-			return overrides.computeIfAbsent(location, bakery::getModel);
+			return overrides.computeIfAbsent(location, bakeryAccessor::callGetModel);
 		}
 		
 		@Override
@@ -156,10 +159,10 @@ public class TrimItemModels
 			if(model instanceof BlockModel blockmodel)
 			{
 				return ITEM_MODEL_GENERATOR.generateBlockModel(sprites, blockmodel)
-						.bake(this, blockmodel, sprites, state, location, false);
+						.bake(this, blockmodel, sprites, state, false);
 			}
 			
-			return model.bake(this, sprites, state, location);
+			return model.bake(this, sprites, state);
 		}
 	}
 	

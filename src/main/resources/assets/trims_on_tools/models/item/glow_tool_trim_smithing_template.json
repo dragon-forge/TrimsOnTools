@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
-	"loader": "forge:composite",
+	"loader": "neoforge:composite",
 	"children": {
 		"normal": {
 			"parent": "trims_on_tools:item/glow_tool_trim_smithing_template/base"
 		},
 		"emissive": {
-			"parent": "trims_on_tools:item/glow_tool_trim_smithing_template/emissive",
-			"loader": "trims_on_tools:emissive"
+			"loader": "hammerlib:emissive",
+			"parent": "trims_on_tools:item/glow_tool_trim_smithing_template/emissive"
 		}
 	}
 }

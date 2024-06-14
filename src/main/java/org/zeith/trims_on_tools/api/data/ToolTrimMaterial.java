@@ -2,18 +2,22 @@ package org.zeith.trims_on_tools.api.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.*;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraft.world.item.*;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import org.zeith.hammerlib.api.forge.StreamCodecs;
 import org.zeith.trims_on_tools.TrimsOnToolsMod;
-import org.zeith.trims_on_tools.api.CodecsToT;
 import org.zeith.trims_on_tools.api.RegistriesToT;
 import org.zeith.trims_on_tools.api.util.Conditionals;
 import org.zeith.trims_on_tools.api.util.LazilyInitializedPredicate;
@@ -37,13 +41,26 @@ public final class ToolTrimMaterial
 	public static final Codec<ToolTrimMaterial> DIRECT_CODEC = RecordCodecBuilder.create((inst) ->
 			inst.group(
 					ResourceLocation.CODEC.fieldOf("asset").forGetter(ToolTrimMaterial::asset),
-					RegistryFixedCodec.create(Registries.ITEM).optionalFieldOf("ingredient").forGetter(ToolTrimMaterial::ingredient),
+					RegistryFixedCodec.create(Registries.ITEM).lenientOptionalFieldOf("ingredient").forGetter(ToolTrimMaterial::ingredient),
 					Codec.unboundedMap(TagKey.codec(Registries.ITEM), ResourceLocation.CODEC).optionalFieldOf("override_assets", Map.of()).forGetter(ToolTrimMaterial::overrideAssets),
-					ExtraCodecs.COMPONENT.fieldOf("description").forGetter(ToolTrimMaterial::description),
-					CodecsToT.CONDITION.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolTrimMaterial::conditions)
+					ComponentSerialization.CODEC.fieldOf("description").forGetter(ToolTrimMaterial::description),
+					ICondition.CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolTrimMaterial::conditions)
 			).apply(inst, ToolTrimMaterial::new)
 	);
 	public static final Codec<Holder<ToolTrimMaterial>> CODEC = RegistryFileCodec.create(RegistriesToT.TOOL_TRIM_MATERIAL, DIRECT_CODEC);
+	
+	public static final StreamCodec<RegistryFriendlyByteBuf, ToolTrimMaterial> DIRECT_STREAM_CODEC = StreamCodec.composite(
+			ResourceLocation.STREAM_CODEC, ToolTrimMaterial::asset,
+			ByteBufCodecs.holderRegistry(Registries.ITEM).map(Optional::ofNullable, o -> o.orElseGet(() -> Holder.direct(Items.AIR))), ToolTrimMaterial::ingredient,
+			ByteBufCodecs.map(Object2ObjectOpenHashMap::new, ResourceLocation.STREAM_CODEC.map(ItemTags::create, TagKey::location), ResourceLocation.STREAM_CODEC), ToolTrimMaterial::overrideAssets,
+			ComponentSerialization.STREAM_CODEC, ToolTrimMaterial::description,
+			StreamCodecs.createRegistryAwareStreamCodec(ICondition.LIST_CODEC), ToolTrimMaterial::conditions,
+			ToolTrimMaterial::new
+	);
+	
+	public static final StreamCodec<RegistryFriendlyByteBuf, Holder<ToolTrimMaterial>> STREAM_CODEC = ByteBufCodecs.holder(
+			RegistriesToT.TOOL_TRIM_MATERIAL, DIRECT_STREAM_CODEC
+	);
 	
 	private final ResourceLocation asset;
 	private final Optional<Holder<Item>> ingredient;
@@ -98,10 +115,10 @@ public final class ToolTrimMaterial
 		return conditions;
 	}
 	
-	public static Optional<Holder.Reference<ToolTrimMaterial>> getFromIngredient(RegistryAccess access, ItemStack ingredient)
+	public static Optional<Holder.Reference<ToolTrimMaterial>> getFromIngredient(HolderLookup.Provider access, ItemStack ingredient)
 	{
-		return access.registryOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL)
-				.holders()
+		return access.lookupOrThrow(RegistriesToT.TOOL_TRIM_MATERIAL)
+				.listElements()
 				.filter((holder) ->
 				{
 					var mat = holder.value();

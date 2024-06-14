@@ -6,7 +6,7 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ArmorTrimMixin",
+    "ItemStackMixin",
     "SmithingTemplateItemAccessor",
     "SmithingTrimRecipeAccessor",
     "compat.elytratrims.FeatureAccessMixin"
@@ -14,10 +14,10 @@
   "client": [
     "client.BakedModelWrapperMixin",
     "client.HumanoidArmorLayerMixin",
+    "client.ModelBakeryAccessor",
     "client.SimpleBakedModelBuilderMixin",
-    "client.SpriteSourcesAccessor",
-    "compat.elytratrims.ItemMixinMixin",
-    "client.SmithingTemplateItemMixin"
+    "client.SmithingTemplateItemMixin",
+    "compat.elytratrims.ItemMixinMixin"
   ],
   "server": [
   ]

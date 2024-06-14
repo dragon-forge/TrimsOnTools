@@ -5,9 +5,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.neoforged.neoforge.common.conditions.ICondition;
 import org.slf4j.Logger;
-import org.zeith.trims_on_tools.api.CodecsToT;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ public record PermutationMaterialFile(
 	public static final Codec<PermutationMaterialFile> CODEC = RecordCodecBuilder.create((inst) ->
 			inst.group(
 					Codec.unboundedMap(ResourceLocation.CODEC, ResourceLocation.CODEC).fieldOf("permutations").forGetter(PermutationMaterialFile::permutations),
-					CodecsToT.CONDITION.listOf().optionalFieldOf("conditions", List.of()).forGetter(PermutationMaterialFile::conditions)
+					ICondition.CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(PermutationMaterialFile::conditions)
 			).apply(inst, PermutationMaterialFile::new)
 	);
 	

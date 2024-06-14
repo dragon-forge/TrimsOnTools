@@ -29,7 +29,7 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 	
 	@Inject(
 			method = "renderArmorPiece",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/armortrim/ArmorTrim;getTrim(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;")
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;")
 	)
 	private void ToolTrims_renderArmorPiece_preinject(PoseStack p_117119_, MultiBufferSource p_117120_, T entity, EquipmentSlot slot, int p_117123_, A p_117124_, CallbackInfo ci)
 	{
@@ -37,7 +37,7 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 	}
 	
 	@ModifyVariable(
-			method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+			method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
 			at = @At("HEAD"),
 			index = 4,
 			argsOnly = true,

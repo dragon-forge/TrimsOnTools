@@ -1,17 +1,17 @@
 package org.zeith.trims_on_tools;
 
-import net.minecraft.resources.ResourceLocation;
 import org.zeith.hammerlib.annotations.ProvideRecipes;
 import org.zeith.hammerlib.api.IRecipeProvider;
 import org.zeith.hammerlib.event.recipe.RegisterRecipesEvent;
+import org.zeith.hammerlib.util.mcf.Resources;
 
 @ProvideRecipes
 public class RecipesToT
-	implements IRecipeProvider
+		implements IRecipeProvider
 {
 	@Override
 	public void provideRecipes(RegisterRecipesEvent e)
 	{
-		e.removeRecipe(new ResourceLocation("elytratrims", "elytra_glow"));
+		e.removeRecipe(Resources.location("elytratrims", "elytra_glow"));
 	}
 }

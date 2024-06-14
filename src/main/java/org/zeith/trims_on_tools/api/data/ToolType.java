@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.zeith.trims_on_tools.api.CodecsToT;
+import net.neoforged.neoforge.common.conditions.ICondition;
 import org.zeith.trims_on_tools.api.RegistriesToT;
 import org.zeith.trims_on_tools.api.util.Conditionals;
 import org.zeith.trims_on_tools.api.util.LazilyInitializedPredicate;
@@ -24,7 +23,7 @@ public final class ToolType
 	public static final Codec<ToolType> DIRECT_CODEC = RecordCodecBuilder.create((inst) ->
 			inst.group(
 					TagKey.codec(Registries.ITEM).fieldOf("tag").forGetter(ToolType::tag),
-					CodecsToT.CONDITION.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolType::conditions)
+					ICondition.CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolType::conditions)
 			).apply(inst, ToolType::new)
 	);
 	

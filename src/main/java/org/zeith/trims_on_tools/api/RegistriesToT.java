@@ -7,16 +7,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.SmithingTemplateItem;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DataPackRegistryEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import org.zeith.hammerlib.util.mcf.Resources;
 import org.zeith.trims_on_tools.TrimsOnToolsMod;
 import org.zeith.trims_on_tools.api.data.*;
 import org.zeith.trims_on_tools.mixins.SmithingTemplateItemAccessor;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class RegistriesToT
 {
 	private static final ChatFormatting TITLE_FORMAT = ChatFormatting.GRAY;
@@ -26,11 +27,11 @@ public class RegistriesToT
 	private static final Component TOOL_TRIM_BASE_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", TrimsOnToolsMod.id("smithing_template.tool_trim.base_slot_description")));
 	private static final Component TOOL_TRIM_ADDITIONS_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", TrimsOnToolsMod.id("smithing_template.tool_trim.additions_slot_description")));
 	
-	private static final ResourceLocation EMPTY_SLOT_HOE = new ResourceLocation("item/empty_slot_hoe");
-	private static final ResourceLocation EMPTY_SLOT_AXE = new ResourceLocation("item/empty_slot_axe");
-	private static final ResourceLocation EMPTY_SLOT_SWORD = new ResourceLocation("item/empty_slot_sword");
-	private static final ResourceLocation EMPTY_SLOT_SHOVEL = new ResourceLocation("item/empty_slot_shovel");
-	private static final ResourceLocation EMPTY_SLOT_PICKAXE = new ResourceLocation("item/empty_slot_pickaxe");
+	private static final ResourceLocation EMPTY_SLOT_HOE = Resources.location("item/empty_slot_hoe");
+	private static final ResourceLocation EMPTY_SLOT_AXE = Resources.location("item/empty_slot_axe");
+	private static final ResourceLocation EMPTY_SLOT_SWORD = Resources.location("item/empty_slot_sword");
+	private static final ResourceLocation EMPTY_SLOT_SHOVEL = Resources.location("item/empty_slot_shovel");
+	private static final ResourceLocation EMPTY_SLOT_PICKAXE = Resources.location("item/empty_slot_pickaxe");
 	
 	public static final ResourceKey<Registry<ToolTrimPattern>> TOOL_TRIM_PATTERN = createRegistryKey("tool_trim_pattern");
 	public static final ResourceKey<Registry<ToolTrimMaterial>> TOOL_TRIM_MATERIAL = createRegistryKey("tool_trim_material");

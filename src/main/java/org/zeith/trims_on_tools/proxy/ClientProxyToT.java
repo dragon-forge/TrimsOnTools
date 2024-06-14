@@ -3,13 +3,14 @@ package org.zeith.trims_on_tools.proxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.*;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import org.zeith.hammerlib.api.proxy.IClientProxy;
 import org.zeith.hammerlib.util.mcf.RunnableReloader;
+import org.zeith.trims_on_tools.TrimsOnToolsMod;
 import org.zeith.trims_on_tools.client.geom.TrimItemModels;
 import org.zeith.trims_on_tools.client.resource.TrimPermutationsSource;
 import org.zeith.trims_on_tools.init.ItemsToT;
@@ -28,13 +29,13 @@ public class ClientProxyToT
 		modBus.addListener(this::onRegisterReloadListenerEvent);
 		modBus.addListener(this::buildTabs);
 		
-		MinecraftForge.EVENT_BUS.addListener(this::clientTick);
-		MinecraftForge.EVENT_BUS.addListener(this::tagsUpdated);
+		NeoForge.EVENT_BUS.addListener(this::clientTick);
+		NeoForge.EVENT_BUS.addListener(this::tagsUpdated);
 	}
 	
 	protected boolean hasLevel;
 	
-	private void clientTick(TickEvent.ClientTickEvent event)
+	private void clientTick(ClientTickEvent.Pre event)
 	{
 		var hasLevel = Minecraft.getInstance().level != null;
 		if(hasLevel != this.hasLevel)
@@ -84,8 +85,8 @@ public class ClientProxyToT
 		event.registerReloadListener(RunnableReloader.of(TrimItemModels::reload));
 	}
 	
-	private void registerSpriteSources(RegisterEvent e)
+	private void registerSpriteSources(RegisterSpriteSourceTypesEvent e)
 	{
-		TrimPermutationsSource.TRIM_PERMUTATIONS.codec();
+		TrimPermutationsSource.TRIM_PERMUTATIONS = e.register(TrimsOnToolsMod.id("trim_permutations"), TrimPermutationsSource.CODEC);
 	}
 }

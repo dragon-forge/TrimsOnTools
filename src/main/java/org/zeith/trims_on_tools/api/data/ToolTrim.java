@@ -3,33 +3,35 @@ package org.zeith.trims_on_tools.api.data;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.core.*;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.*;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipProvider;
 import org.slf4j.Logger;
+import org.zeith.hammerlib.util.mcf.Resources;
 import org.zeith.trims_on_tools.TrimsOnToolsMod;
 import org.zeith.trims_on_tools.api.util.TrimKey;
+import org.zeith.trims_on_tools.init.DataComponentsToT;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
-import static org.zeith.trims_on_tools.ConstantsToT.TAG_TOOL_TRIM_ID;
-
-public class ToolTrim
+public class ToolTrim implements TooltipProvider
 {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	
-	private static final Component UPGRADE_TITLE = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.upgrade"))).withStyle(ChatFormatting.GRAY);
+	private static final Component UPGRADE_TITLE = Component.translatable(Util.makeDescriptionId("item", Resources.location("smithing_template.upgrade"))).withStyle(ChatFormatting.GRAY);
 	
 	public static final Codec<ToolTrim> CODEC = RecordCodecBuilder.create((inst) ->
 			inst.group(
@@ -38,8 +40,16 @@ public class ToolTrim
 			).apply(inst, ToolTrim::new)
 	);
 	
+	public static final StreamCodec<RegistryFriendlyByteBuf, ToolTrim> STREAM_CODEC = StreamCodec.composite(
+			ToolTrimMaterial.STREAM_CODEC, ToolTrim::material,
+			ToolTrimPattern.STREAM_CODEC, ToolTrim::pattern,
+//			ByteBufCodecs.BOOL, p_330107_ -> p_330107_.showInTooltip,
+			ToolTrim::new
+	);
+	
 	private final Holder<ToolTrimMaterial> material;
 	private final Holder<ToolTrimPattern> pattern;
+	@Getter
 	private final TrimKey key;
 	private final BiFunction<ItemStack, ResourceLocation, ResourceLocation> toolTexture;
 	
@@ -102,28 +112,28 @@ public class ToolTrim
 	public boolean equals(Object other)
 	{
 		if(!(other instanceof ToolTrim trim)) return false;
-		
 		return trim.pattern == this.pattern && trim.material == this.material;
 	}
 	
-	public TrimKey getKey()
+	@Override
+	public int hashCode()
 	{
-		return key;
+		return Objects.hash(material, pattern);
 	}
 	
 	public static final TagKey<Item> TRIMMABLE_TOOLS = ItemTags.create(TrimsOnToolsMod.id("trimmable_tools"));
 	
-	public static boolean setTrim(RegistryAccess access, ItemStack stack, ToolTrim trim)
+	public static boolean setTrim(HolderLookup.Provider access, ItemStack stack, ToolTrim trim)
 	{
 		if(stack.is(TRIMMABLE_TOOLS))
 		{
 			if(trim == null)
 			{
-				stack.removeTagKey(TAG_TOOL_TRIM_ID);
+				stack.remove(DataComponentsToT.TRIM);
 				return true;
 			}
 			
-			stack.getOrCreateTag().put(TAG_TOOL_TRIM_ID, CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, access), trim).result().orElseThrow());
+			stack.set(DataComponentsToT.TRIM, trim);
 			return true;
 		} else
 		{
@@ -131,27 +141,22 @@ public class ToolTrim
 		}
 	}
 	
-	public static Optional<ToolTrim> getTrim(RegistryAccess access, ItemStack stack)
+	public static Optional<ToolTrim> getTrim(ItemStack stack)
 	{
-		if(stack.is(TRIMMABLE_TOOLS) && stack.getTag() != null && stack.getTag().contains(TAG_TOOL_TRIM_ID))
+		if(stack.is(TRIMMABLE_TOOLS))
 		{
-			CompoundTag compoundtag = stack.getTagElement(TAG_TOOL_TRIM_ID);
-			ToolTrim armortrim = CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, access), compoundtag).resultOrPartial(LOGGER::error).orElse(null);
-			return Optional.ofNullable(armortrim);
+			return Optional.ofNullable(stack.get(DataComponentsToT.TRIM));
 		} else
 		{
 			return Optional.empty();
 		}
 	}
 	
-	public static void appendUpgradeHoverText(ItemStack stack, RegistryAccess access, List<Component> hoverText)
+	@Override
+	public void addToTooltip(Item.TooltipContext ctx, Consumer<Component> hoverText, TooltipFlag flags)
 	{
-		Optional<ToolTrim> opt = getTrim(access, stack);
-		if(!opt.isPresent()) return;
-		
-		ToolTrim trim = opt.get();
-		hoverText.add(UPGRADE_TITLE);
-		hoverText.add(CommonComponents.space().append(trim.pattern().value().description().copy().withStyle(trim.material().value().description().getStyle())));
-		hoverText.add(CommonComponents.space().append(trim.material().value().description()));
+		hoverText.accept(UPGRADE_TITLE);
+		hoverText.accept(CommonComponents.space().append(pattern().value().description().copy().withStyle(material().value().description().getStyle())));
+		hoverText.accept(CommonComponents.space().append(material().value().description()));
 	}
 }

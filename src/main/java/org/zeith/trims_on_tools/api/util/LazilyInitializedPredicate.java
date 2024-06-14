@@ -1,7 +1,5 @@
 package org.zeith.trims_on_tools.api.util;
 
-import net.minecraftforge.common.crafting.conditions.ICondition;
-
 import java.util.function.Predicate;
 
 public class LazilyInitializedPredicate<T>

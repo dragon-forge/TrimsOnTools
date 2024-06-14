@@ -3,16 +3,19 @@ package org.zeith.trims_on_tools.api.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.*;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.TrimMaterial;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.zeith.trims_on_tools.api.CodecsToT;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import org.zeith.hammerlib.api.forge.StreamCodecs;
 import org.zeith.trims_on_tools.api.RegistriesToT;
 import org.zeith.trims_on_tools.api.util.Conditionals;
 import org.zeith.trims_on_tools.api.util.LazilyInitializedPredicate;
@@ -26,9 +29,21 @@ public final class ToolTrimPattern
 			inst.group(
 					ResourceLocation.CODEC.fieldOf("asset_id").forGetter(ToolTrimPattern::assetId),
 					RegistryFixedCodec.create(Registries.ITEM).fieldOf("template_item").forGetter(ToolTrimPattern::templateItem),
-					ExtraCodecs.COMPONENT.fieldOf("description").forGetter(ToolTrimPattern::description),
-					CodecsToT.CONDITION.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolTrimPattern::conditions)
+					ComponentSerialization.CODEC.fieldOf("description").forGetter(ToolTrimPattern::description),
+					ICondition.CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(ToolTrimPattern::conditions)
 			).apply(inst, ToolTrimPattern::new)
+	);
+	
+	public static final StreamCodec<RegistryFriendlyByteBuf, ToolTrimPattern> DIRECT_STREAM_CODEC = StreamCodec.composite(
+			ResourceLocation.STREAM_CODEC, ToolTrimPattern::assetId,
+			ByteBufCodecs.holderRegistry(Registries.ITEM), ToolTrimPattern::templateItem,
+			ComponentSerialization.STREAM_CODEC, ToolTrimPattern::description,
+			StreamCodecs.createRegistryAwareStreamCodec(ICondition.LIST_CODEC), ToolTrimPattern::conditions,
+			ToolTrimPattern::new
+	);
+	
+	public static final StreamCodec<RegistryFriendlyByteBuf, Holder<ToolTrimPattern>> STREAM_CODEC = ByteBufCodecs.holder(
+			RegistriesToT.TOOL_TRIM_PATTERN, DIRECT_STREAM_CODEC
 	);
 	
 	public static final Codec<Holder<ToolTrimPattern>> CODEC = RegistryFileCodec.create(RegistriesToT.TOOL_TRIM_PATTERN, DIRECT_CODEC);
@@ -62,10 +77,10 @@ public final class ToolTrimPattern
 		return this.description.copy().withStyle(material.value().description().getStyle());
 	}
 	
-	public static Optional<Holder.Reference<ToolTrimPattern>> getFromTemplate(RegistryAccess access, ItemStack template)
+	public static Optional<Holder.Reference<ToolTrimPattern>> getFromTemplate(HolderLookup.Provider access, ItemStack template)
 	{
-		return access.registryOrThrow(RegistriesToT.TOOL_TRIM_PATTERN)
-				.holders()
+		return access.lookupOrThrow(RegistriesToT.TOOL_TRIM_PATTERN)
+				.listElements()
 				.filter((holder) ->
 				{
 					var pat = holder.value();

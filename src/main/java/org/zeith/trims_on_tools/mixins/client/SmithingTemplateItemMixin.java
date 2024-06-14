@@ -8,9 +8,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.flag.FeatureFlag;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.TrimPatterns;
-import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -50,7 +50,7 @@ public class SmithingTemplateItemMixin
 	private static ResourceLocation EMPTY_SLOT_SHOVEL;
 	
 	@Unique
-	private static final Component TOOL_TRIM_APPLIES_TO = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(MOD_ID, "smithing_template.tool_trim.applies_to"))).withStyle(DESCRIPTION_FORMAT);
+	private static final Component TOOL_TRIM_APPLIES_TO = Component.translatable(Util.makeDescriptionId("item", ResourceLocation.fromNamespaceAndPath(MOD_ID, "smithing_template.tool_trim.applies_to"))).withStyle(DESCRIPTION_FORMAT);
 	
 	@Unique
 	private static final Set<ResourceLocation> TOOL_TRIM_VANILLA_TEMPLATES = Stream.of(
@@ -73,28 +73,28 @@ public class SmithingTemplateItemMixin
 	).map(ResourceKey::location).collect(Collectors.toSet());
 	
 	@Unique
-	private static final TagKey<Item> TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS = ItemTags.create(new ResourceLocation(MOD_ID, "tool_template_modifiers"));
+	private static final TagKey<Item> TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS = ItemTags.create(ResourceLocation.fromNamespaceAndPath(MOD_ID, "tool_template_modifiers"));
 	
 	@Inject(
 			method = "appendHoverText",
 			at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 4)
 	)
-	private void ToolTrims_appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flags, CallbackInfo ci)
+	private void ToolTrims_appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> tooltip, TooltipFlag flags, CallbackInfo ci)
 	{
-		if(level == null)
+		if(ctx == null)
 		{
 			var pl = ColoredLightManager.getClientPlayer();
-			if(pl != null) level = pl.level();
+			if(pl != null) ctx = Item.TooltipContext.of(pl.level());
 		}
-		if((level != null && ToolTrimPattern.getFromTemplate(level.registryAccess(), stack).isPresent()) || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
+		if((ctx != null && ToolTrimPattern.getFromTemplate(ctx.registries(), stack).isPresent()) || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
 			tooltip.add(CommonComponents.space().append(TOOL_TRIM_APPLIES_TO));
 	}
 	
 	@Inject(
-			method = "createArmorTrimTemplate(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/world/item/SmithingTemplateItem;",
+			method = "createArmorTrimTemplate(Lnet/minecraft/resources/ResourceLocation;[Lnet/minecraft/world/flag/FeatureFlag;)Lnet/minecraft/world/item/SmithingTemplateItem;",
 			at = @At("RETURN")
 	)
-	private static void ToolTrims_createArmorTrimTemplate(ResourceLocation location, CallbackInfoReturnable<SmithingTemplateItem> cir)
+	private static void ToolTrims_createArmorTrimTemplate(ResourceLocation location, FeatureFlag[] featureFlags, CallbackInfoReturnable<SmithingTemplateItem> cir)
 	{
 		if(!TOOL_TRIM_VANILLA_TEMPLATES.contains(location)) return;
 		

@@ -3,34 +3,27 @@ package org.zeith.trims_on_tools.client.resource;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.client.renderer.texture.SpriteContents;
-import net.minecraft.client.renderer.texture.atlas.SpriteSource;
-import net.minecraft.client.renderer.texture.atlas.SpriteSourceType;
+import net.minecraft.client.renderer.texture.atlas.*;
 import net.minecraft.client.renderer.texture.atlas.sources.LazyLoadedImage;
-import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.*;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.textures.ForgeTextureMetadata;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.conditions.ICondition;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import org.zeith.trims_on_tools.TrimsOnToolsMod;
+import org.zeith.hammerlib.util.mcf.Resources;
 import org.zeith.trims_on_tools.api.util.Conditionals;
-import org.zeith.trims_on_tools.mixins.client.SpriteSourcesAccessor;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.util.*;
 import java.util.function.IntUnaryOperator;
@@ -41,14 +34,14 @@ public record TrimPermutationsSource(boolean debug)
 {
 	static final Logger LOGGER = LogUtils.getLogger();
 	
-	public static final Codec<TrimPermutationsSource> CODEC = RecordCodecBuilder.create((inst) ->
+	public static final MapCodec<TrimPermutationsSource> CODEC = RecordCodecBuilder.mapCodec((inst) ->
 			inst.group(
 					Codec.BOOL.optionalFieldOf("debug", false).forGetter(TrimPermutationsSource::debug)
 			).apply(inst, TrimPermutationsSource::new));
 	
-	public static final SpriteSourceType TRIM_PERMUTATIONS = SpriteSourcesAccessor.callRegister(TrimsOnToolsMod.id("trim_permutations").toString(), CODEC);
+	public static SpriteSourceType TRIM_PERMUTATIONS;
 	
-	public static final ResourceLocation PALETTE_KEY = new ResourceLocation("trims/color_palettes/trim_palette");
+	public static final ResourceLocation PALETTE_KEY = Resources.location("trims/color_palettes/trim_palette");
 	public static final FileToIdConverter TRIM_LISTER = new FileToIdConverter("textures/trims_on_tools/trims", ".png");
 	public static final FileToIdConverter TOOL_TRIM_MATERIALS = new FileToIdConverter("trims_on_tools/materials", ".json");
 	
@@ -185,9 +178,8 @@ public record TrimPermutationsSource(boolean debug)
 	record PalettedSpriteSupplier(LazyLoadedImage baseImage, Supplier<IntUnaryOperator> palette, ResourceLocation permutationLocation)
 			implements SpriteSupplier
 	{
-		@Nullable
 		@Override
-		public SpriteContents get()
+		public SpriteContents apply(SpriteResourceLoader spriteResourceLoader)
 		{
 			SpriteContents content;
 			
@@ -198,8 +190,7 @@ public record TrimPermutationsSource(boolean debug)
 						this.permutationLocation,
 						new FrameSize(image.getWidth(), image.getHeight()),
 						image,
-						AnimationMetadataSection.EMPTY,
-						ForgeTextureMetadata.EMPTY
+						ResourceMetadata.EMPTY
 				);
 			} catch(IllegalArgumentException | IOException ioexception)
 			{
