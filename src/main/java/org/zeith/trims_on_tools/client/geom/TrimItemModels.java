@@ -152,6 +152,12 @@ public class TrimItemModels
 		}
 		
 		@Override
+		public @Nullable UnbakedModel getTopLevelModel(ModelResourceLocation location)
+		{
+			return null;
+		}
+		
+		@Override
 		public BakedModel bake(ResourceLocation location, ModelState state, Function<Material, TextureAtlasSprite> sprites)
 		{
 			UnbakedModel model = this.getModel(location);
@@ -162,6 +168,12 @@ public class TrimItemModels
 						.bake(this, blockmodel, sprites, state, false);
 			}
 			
+			return bakeUncached(model, state, sprites);
+		}
+		
+		@Override
+		public @Nullable BakedModel bakeUncached(UnbakedModel model, ModelState state, Function<Material, TextureAtlasSprite> sprites)
+		{
 			return model.bake(this, sprites, state);
 		}
 	}

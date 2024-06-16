@@ -1,9 +1,9 @@
 # Mod Info
-mod_version=21.0.0
+mod_version=21.0.1
 build_candidate=false
 
 # Mod dependencies (jei is not a requirement, but HammerLib is)
-hl_version=21.0.4
+hl_version=21.0.6
 # jei_version=19.0.0.1
 # hammeranims_version=21.0.33
 
@@ -24,8 +24,8 @@ maven_url=file:///R:/
 # MC Info
 mc_version=1.21
 mc_range=[1.21,1.22)
-forge_version=21.0.6-beta
-forge_range=[21.0.6-beta,)
+forge_version=21.0.13-beta
+forge_range=[21.0.13-beta,)
 javafml_range=[2.0,)
 mc_user=Zeitheron,63fa4c485b5640809727d5d59663e603
 
@@ -37,7 +37,7 @@ cf_project=1025666
 modrinth_project=b3wKSVMw
 
 # alpha, beta, release
-release_type=release
+release_type=beta
 
 # List of mods separated by ;
 # If a specific mod for one platform is needed, @m: or @c: prefixes are used.
