@@ -2,6 +2,8 @@ package org.zeith.trims_on_tools.mixins.client;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -17,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.zeith.hammerlib.api.lighting.ColoredLightManager;
+import org.zeith.trims_on_tools.TrimsOnToolsMod;
 import org.zeith.trims_on_tools.api.data.ToolTrimPattern;
 import org.zeith.trims_on_tools.mixins.SmithingTemplateItemAccessor;
 
@@ -81,12 +84,19 @@ public class SmithingTemplateItemMixin
 	)
 	private void ToolTrims_appendHoverText(ItemStack stack, Item.TooltipContext ctx, List<Component> tooltip, TooltipFlag flags, CallbackInfo ci)
 	{
-		if(ctx == null)
+		HolderLookup.Provider provider = ctx.registries();
+		
+		if(provider == null)
 		{
-			var pl = ColoredLightManager.getClientPlayer();
-			if(pl != null) ctx = Item.TooltipContext.of(pl.level());
+			var pl = TrimsOnToolsMod.PROXY.getClientLevel();
+			if(pl != null)
+				provider = pl.registryAccess();
 		}
-		if((ctx != null && ToolTrimPattern.getFromTemplate(ctx.registries(), stack).isPresent()) || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
+		
+		if(provider == null)
+			provider = RegistryAccess.EMPTY;
+		
+		if(ToolTrimPattern.getFromTemplate(provider, stack).isPresent() || stack.is(TOOLTRIMS$TOOL_TEMPLATE_MODIFIERS))
 			tooltip.add(CommonComponents.space().append(TOOL_TRIM_APPLIES_TO));
 	}
 	

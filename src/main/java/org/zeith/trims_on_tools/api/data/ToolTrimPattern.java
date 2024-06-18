@@ -79,8 +79,9 @@ public final class ToolTrimPattern
 	
 	public static Optional<Holder.Reference<ToolTrimPattern>> getFromTemplate(HolderLookup.Provider access, ItemStack template)
 	{
-		return access.lookupOrThrow(RegistriesToT.TOOL_TRIM_PATTERN)
-				.listElements()
+		return access.lookup(RegistriesToT.TOOL_TRIM_PATTERN)
+				.stream()
+				.flatMap(HolderLookup::listElements)
 				.filter((holder) ->
 				{
 					var pat = holder.value();

@@ -63,7 +63,7 @@ public class SmithingGlowTrimRecipe
 	@Override
 	public ItemStack getResultItem(HolderLookup.Provider access)
 	{
-		ItemStack itemstack = new ItemStack(Items.IRON_PICKAXE);
+		ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
 		Optional<Holder.Reference<ToolTrimPattern>> optional = access.lookupOrThrow(RegistriesToT.TOOL_TRIM_PATTERN).listElements().findFirst();
 		if(optional.isPresent())
 		{
@@ -71,12 +71,12 @@ public class SmithingGlowTrimRecipe
 			if(optional1.isPresent())
 			{
 				ToolTrim trim = new ToolTrim(optional1.get(), optional.get());
-				ToolTrim.setTrim(access, itemstack, trim);
-				TrimGlowData.setGlowData(itemstack, new TrimGlowData(true));
+				ToolTrim.setTrim(access, stack, trim);
+				TrimGlowData.setGlowData(stack, new TrimGlowData(true));
 			}
 		}
 		
-		return itemstack;
+		return stack;
 	}
 	
 	public static class Type
