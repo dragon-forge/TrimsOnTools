@@ -1,0 +1,12 @@
+{
+  "type": "trims_on_tools:smithing_tool_trim",
+  "addition": {
+    "tag": "trims_on_tools:tool_trim_materials"
+  },
+  "base": {
+    "tag": "trims_on_tools:trimmable_tools"
+  },
+  "template": {
+    "item": "minecraft:flow_armor_trim_smithing_template"
+  }
+}
