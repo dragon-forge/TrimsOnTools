@@ -70,12 +70,11 @@ public class ClientProxyToT
 	
 	protected void putItemAfter(BuildCreativeModeTabContentsEvent e, Item key, ItemStack newItem)
 	{
-		StreamSupport.stream(e.getEntries().spliterator(), false)
-				.map(Map.Entry::getKey)
+		StreamSupport.stream(e.getParentEntries().spliterator(), false)
 				.filter(s -> s.is(key))
 				.findFirst()
 				.ifPresentOrElse(after ->
-						e.getEntries().putAfter(after, newItem, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS), () ->
+						e.insertAfter(after, newItem, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS), () ->
 						e.accept(newItem)
 				);
 	}
