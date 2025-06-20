@@ -20,41 +20,37 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 		extends RenderLayer<T, M>
 {
 	@Unique
-	private TrimGlowData toolTrims$emission;
+	private int toolTrims$prevEmission;
 	
 	public HumanoidArmorLayerMixin(RenderLayerParent<T, M> p_117346_)
 	{
 		super(p_117346_);
 	}
 	
-	@Inject(
-			method = "renderArmorPiece",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/armortrim/ArmorTrim;getTrim(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;")
-	)
-	private void ToolTrims_renderArmorPiece_preinject(PoseStack p_117119_, MultiBufferSource p_117120_, T entity, EquipmentSlot slot, int p_117123_, A p_117124_, CallbackInfo ci)
-	{
-		toolTrims$emission = TrimGlowData.getGlowData(entity.getItemBySlot(slot)).orElse(null);
-	}
-	
 	@ModifyVariable(
-			method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
-			at = @At("HEAD"),
-			index = 4,
+			method = "renderArmorPiece",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/armortrim/ArmorTrim;getTrim(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;"),
+			index = 5,
 			argsOnly = true,
 			remap = false
 	)
-	private int ToolTrims_renderTrimEmission(int prev)
+	private int ToolTrims_renderTrimEmission(int prev, PoseStack p_117119_, MultiBufferSource p_117120_, T entity, EquipmentSlot slot, int p_117123_, A p_117124_)
 	{
-		if(toolTrims$emission == null || !toolTrims$emission.glow()) return prev;
+		toolTrims$prevEmission = prev;
+		var emm = TrimGlowData.getGlowData(entity.getItemBySlot(slot)).orElse(null);
+		if(emm == null || !emm.glow()) return prev;
 		return LightTexture.FULL_BRIGHT;
 	}
 	
-	@Inject(
+	@ModifyVariable(
 			method = "renderArmorPiece",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasFoil()Z")
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasFoil()Z"),
+			index = 5,
+			argsOnly = true,
+			remap = false
 	)
-	private void ToolTrims_renderArmorPiece_postinject(PoseStack p_117119_, MultiBufferSource p_117120_, T entity, EquipmentSlot slot, int p_117123_, A p_117124_, CallbackInfo ci)
+	private int ToolTrims_renderArmorPiece_postinject(int prev)
 	{
-		toolTrims$emission = null;
+		return toolTrims$prevEmission;
 	}
 }

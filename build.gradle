@@ -54,7 +54,7 @@ minecraft {
     copyIdeResources = true
     runs {
         client {
-            workingDirectory project.file('run/client')
+            workingDirectory project.file("runs/$config.mc_version/client")
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
             def args = new ArrayList()
@@ -83,7 +83,7 @@ minecraft {
         }
 
         server {
-            workingDirectory project.file('run/server')
+            workingDirectory project.file("runs/$config.mc_version/server")
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
             property 'mixin.env.disableRefMap', 'true'
@@ -99,7 +99,7 @@ minecraft {
         }
 
         gameTestServer {
-            workingDirectory project.file('run/server')
+            workingDirectory project.file("runs/$config.mc_version/gameTestServer")
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
             property 'mixin.env.disableRefMap', 'true'
@@ -115,7 +115,7 @@ minecraft {
         }
 
         data {
-            workingDirectory project.file('run/client')
+            workingDirectory project.file("runs/$config.mc_version/client")
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
             property 'mixin.env.disableRefMap', 'true'
@@ -167,7 +167,7 @@ dependencies {
     if (hasConfig("hl_version") && !config.hl_version.isEmpty()) {
         implementation fg.deobf("org.zeith.hammerlib:HammerLib-${config.mc_version}:${config.hl_version}")
     }
-	
+
     if (hasConfig("hammeranims_version") && !config.hammeranims_version.isEmpty()) {
         implementation fg.deobf("org.zeith.hammeranims:HammerAnimations-${config.mc_version}:${config.hammeranims_version}")
     }
@@ -488,10 +488,8 @@ tasks.register('buildAndUploadMod') {
 }
 
 afterEvaluate {
-    if (!config.maven_url.isEmpty()) {
-        tasks["curseforge${config.cf_project}"].dependsOn.add(publish)
-        tasks["modrinth"].dependsOn.add(publish)
-    }
+    tasks["curseforge${config.cf_project}"].dependsOn.add(publish)
+    tasks["modrinth"].dependsOn.add(publish)
 }
 
 publishing {
@@ -518,7 +516,7 @@ publishing {
     }
     repositories {
         maven {
-            url config.maven_url
+            url System.env.MAVEN_URL
         }
     }
 }
